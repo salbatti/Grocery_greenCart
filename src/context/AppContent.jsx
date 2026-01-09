@@ -19,7 +19,7 @@ export const AppContextProvider = ({ children }) => {
     }
 
     // Add product to Cart
-const addToCart = () => {
+const addToCart = (itemId) => {
     let cartData = structuredClone(cartItems);
 
     if (cartData[itemId]) {
@@ -56,7 +56,10 @@ const removeFromCart = (itemId) => {
     toast.success("Removed from Cart");
 };
 
-
+    useEffect(() => {
+        console.log("Updated user:", user);
+    }, [user]);
+    
     useEffect(()=>{
         fetchProducts()
     },[])
