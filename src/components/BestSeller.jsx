@@ -9,9 +9,13 @@ const BestSeller = () => {
       <p className='text-2xl md:text-3xl font-medium'>Best Sellers</p>
       <div className='  grid grid-cols-1
         sm:grid-cols-2
-        md:grid-cols-4 
-        lg:grid-cols-5
-        gap-2 sm:gap-4 md:gap-5 lg:gap-6
+        md:grid-cols-3
+        lg:grid-cols-4
+        xl:grid-cols-5    
+        gap-2 
+        sm:gap-4
+        md:gap-5 
+        lg:gap-6
         mt-6'>
         {products.filter((products) => products.inStock).slice(0, 5).map((products, index) => (
           <ProductCard product={products} />
