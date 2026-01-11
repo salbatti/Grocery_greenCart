@@ -23,10 +23,10 @@ const App = () => {
       <div className={`${isSellerPath ? '' : 'px-6 md:px-16 lg:px-24 xl:px-32'}`}>
         <Routes>
           <Route path='/' element={<Home />} />
-          <Route path='/cart' element={<Cart />} />
           <Route path='/products' element={<AllProducts />} />
           <Route path='/products/:category' element={<ProductCatgory />} />
           <Route path='/products/:category/:id' element={<ProductDetails />} />
+          <Route path='/cart' element={<Cart />} />
         </Routes>
       </div>
       {isSellerPath ? null : <Footer />}
