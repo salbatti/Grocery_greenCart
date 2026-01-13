@@ -99,9 +99,7 @@ const removeFromCart = (itemId) => {
     
     useEffect(()=>{
         fetchProducts()
-        console.log("cartItems");
-        
-        console.log(cartItems);
+
         
     },[])
     const value = {
