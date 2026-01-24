@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useAppContext } from "../context/AppContent";
+import { useAppContext } from "../context/AppContent.jsx";
 import toast from "react-hot-toast";
 
 
@@ -8,27 +8,30 @@ const Login = () => {
     const [name, setName] = React.useState("");
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
-    const { user, setShowUserLogin, setUser,axios,navigate } = useAppContext()
+    const { user, setShowUserLogin, setUser, axios, navigate, setCartItems } = useAppContext()
 
 
     const onsubmitHandler = async (e) => {
-      try {
-        e.preventDefault()
+        try {
+            e.preventDefault()
 
-        const {data}= await axios.post(`/api/user/${state}`,{
-            name,email,password
-        })
-        if(data.success){
-            navigate('/')
-            setUser(data.user)
-            setShowUserLogin(false)
+            const { data } = await axios.post(`/api/user/${state}`, {
+                name, email, password
+            })
+            if (data.success) {
+                navigate('/')
+                setUser(data.user)
+                if (data.user.cartItems) {
+                    setCartItems(data.user.cartItems)
+                }
+                setShowUserLogin(false)
+            }
+            else {
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
         }
-        else{
-            toast.error(data.message)
-        }
-      } catch (error) {
-        toast.error(error.message)
-      }
     }
 
     return (

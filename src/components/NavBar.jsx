@@ -8,6 +8,7 @@ const NavBar = () => {
     const [open, setOpen] = React.useState(false)
     const { user, setUser, setShowUserLogin, navigate, searchQuery, setSearchQuery, getCartCount, axios } = useAppContext()
 
+
     const logout = async () => {
         try {
             const { data } = await axios.get('/api/user/logout')

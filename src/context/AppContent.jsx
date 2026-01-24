@@ -1,11 +1,11 @@
-import { createContext, use, useContext, useEffect, useState } from "react"
+import { createContext, useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { dummyProducts } from "../assets/assets"
 import toast from "react-hot-toast"
 import axios from "axios";
 
-axios.defaults.withCredentials =true;//doubt
-axios.defaults.baseURL =import.meta.env.VITE_BACKEND_URL;
+axios.defaults.withCredentials = true;//doubt
+axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
 
 export const AppContent = createContext()
 
@@ -14,138 +14,175 @@ export const AppContextProvider = ({ children }) => {
     const navigate = useNavigate()
     const [user, setUser] = useState(null)
     const [isSeller, setIsSeller] = useState(false)
-    const [showUserLogin,setShowUserLogin] = useState(false)
-    const [products,setProducts] = useState([])
-    const [cartItems,setCartItems] = useState({})
-    const [searchQuery,setSearchQuery] = useState({})
+    const [showUserLogin, setShowUserLogin] = useState(false)
+    const [products, setProducts] = useState([])
+    const [cartItems, setCartItems] = useState({})
+    const [searchQuery, setSearchQuery] = useState({})
+
+    // const getUserData = async () => {
+    //     try {
+    //         const { data } = await axios.get('/api/user/is-auth')
+    //         if (data.success) {
+    //             setUser(data.user)
+    //             if (data.user.cartItems) {
+    //                 setCartItems(data.user.cartItems)
+    //             }
+    //         } else {
+    //             setUser(null)
+    //         }
+    //     } catch (error) {
+    //         console.log(error)
+    //     }
+    // }
 
     //Fetch Seller Status
-    const fetchSeller= async ()=>{
+    const fetchSeller = async () => {
         try {
-            const {data} =await axios.get('/api/seller/is-auth')
-            if(data.success){
+            const { data } = await axios.get('/api/seller/is-auth')
+            if (data.success) {
                 setIsSeller(true)
-            }else{
+            } else {
                 setIsSeller(false)
             }
         } catch (error) {
             setIsSeller(false)
         }
     }
-    //Fetch User Auth Status, User Data and Cart Items
-    const fetchUser= async ()=>{
+        // Fetch User Auth Status, User Data and Cart Items
+    const fetchUser = async () => {
         try {
-           const {data}= await axios.get('api/user/is-auth');
-           if(data.success){
-            setUser(data.user)
-            setCartItems(data.user.cartItems)
-           }
+            const { data } = await axios.get('/api/user/is-auth');
+            if(data.success){
+                setUser(data.user);
+                setCartItems(data.user.cartItems);
+            }
         } catch (error) {
-            setUser(null)
+            setUser(null);
         }
     }
+
 
     //fetch all Products
     const fetchProducts = async () => {
         try {
-            const {data}= await axios.get('/api/product/list')
-            if(data.success){
+            const { data } = await axios.get('/api/product/list')
+            if (data.success) {
                 setProducts(data.products)
-            }else{
+            } else {
                 toast.error(data.message)
             }
         } catch (error) {
-               toast.error(data.message)
+            toast.error(error.message)
         }
     }
 
     // Add product to Cart
-const addToCart = (itemId) => {
-    let cartData = structuredClone(cartItems);
+    const addToCart = (itemId) => {
+        let cartData = structuredClone(cartItems);
 
-    if (cartData[itemId]) {
-        cartData[itemId] += 1;
-    } else {
-        cartData[itemId] = 1;
-    }
+        if (cartData[itemId]) {
+            cartData[itemId] += 1;
+        } else {
+            cartData[itemId] = 1;
+        }
 
-    setCartItems(cartData);
-    
-    toast.success("Added to Cart");
-};
+        setCartItems(cartData);
 
-useEffect(()=>{
+        toast.success("Added to Cart");
+    };
+
+    useEffect(() => {
         console.log(cartItems);
 
-},[cartItems])
+    }, [cartItems])
 
-// Update Cart Item Quantity
-const updateCartItem = (itemId, quantity) => {
-    let cartData = structuredClone(cartItems);
-    cartData[itemId] = quantity;
-    setCartItems(cartData);
-    toast.success("Cart Updated");
-};
-
-
-//Get Cart Item Count
-const getCartCount =() =>{
-    let totalCount=0
-    for (const item in cartItems){
-        totalCount += cartItems[item]
-    }
-    return totalCount
-}
+    // Update Cart Item Quantity
+    const updateCartItem = (itemId, quantity) => {
+        let cartData = structuredClone(cartItems);
+        cartData[itemId] = quantity;
+        setCartItems(cartData);
+        toast.success("Cart Updated");
+    };
 
 
-// Get Cart Total Amount
-const getCartAmount = () => {
-  let totalAmount = 0;
-
-  for (const items in cartItems) {
-    let itemInfo = products.find(
-      (product) => product._id === items
-    );
-
-    if (cartItems[items] > 0) {
-      totalAmount += itemInfo.offerPrice * cartItems[items];
-    }
-  }
-
-  return Math.floor(totalAmount * 100) / 100;
-};
-
-    
-// Remove Product from Cart
-const removeFromCart = (itemId) => {
-    let cartData = structuredClone(cartItems);
-
-    if (cartData[itemId]) {
-        cartData[itemId] -= 1;
-
-        if (cartData[itemId] === 0) {
-            delete cartData[itemId];
+    //Get Cart Item Count
+    const getCartCount = () => {
+        let totalCount = 0
+        for (const item in cartItems) {
+            totalCount += cartItems[item]
         }
+        return totalCount
     }
 
-    setCartItems(cartData);
-    toast.success("Removed from Cart");
-};
+
+    // Get Cart Total Amount
+    const getCartAmount = () => {
+        let totalAmount = 0;
+
+        for (const items in cartItems) {
+            let itemInfo = products.find(
+                (product) => product._id === items
+            );
+
+            if (cartItems[items] > 0) {
+                totalAmount += itemInfo.offerPrice * cartItems[items];
+            }
+        }
+
+        return Math.floor(totalAmount * 100) / 100;
+    };
+
+
+    // Remove Product from Cart
+    const removeFromCart = (itemId) => {
+        let cartData = structuredClone(cartItems);
+
+        if (cartData[itemId]) {
+            cartData[itemId] -= 1;
+
+            if (cartData[itemId] === 0) {
+                delete cartData[itemId];
+            }
+        }
+
+        setCartItems(cartData);
+        toast.success("Removed from Cart");
+    };
 
     useEffect(() => {
         console.log("Updated user:", user);
     }, [user]);
-    
-    useEffect(()=>{
-        fetchSeller()
+
+
+
+    useEffect(() => {
+        const updateCart = async () => {
+            try {
+                const { data } = await axios.post('/api/cart/update', { cartItems })
+                if (!data.success) {
+                    toast.error(data.message)
+                }
+            } catch (error) {
+                toast.error(error.message)
+            }
+        }
+        if (user) {
+            updateCart()
+        }
+    }, [cartItems])
+
+    useEffect(() => {
+        fetchUser();
         fetchProducts()
-        fetchUser()
+        // getUserData()
         
-    },[])
+    }, [])
+
     const value = {
         navigate,
         user,
         setUser,
+        // getUserData,
         isSeller,
         setIsSeller,
         showUserLogin,
@@ -156,6 +193,7 @@ const removeFromCart = (itemId) => {
         updateCartItem,
         removeFromCart,
         cartItems,
+        setCartItems,
         searchQuery,
         setSearchQuery,
         getCartCount,
