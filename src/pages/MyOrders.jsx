@@ -7,14 +7,25 @@ import { useAppContext } from '../context/AppContent'
 
 const MyOrders = () => {
     const [myOrders, setMyOrders] = useState([])
-    const { currency } = useAppContext()
+    const { currency, axios, user } = useAppContext()
 
     const fetchMyOrders = async () => {
-        setMyOrders(dummyOrders)
+        try {
+            const { data } = await axios.get('/api/order/user')
+            if (data.success) {
+                setMyOrders(data.orders)
+                console.log(myOrders);
+                
+            }
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     useEffect(() => {
-        fetchMyOrders()
+        if (user) {
+            fetchMyOrders()
+        }
     }, [])
 
     return (
@@ -61,7 +72,7 @@ const MyOrders = () => {
 
                                 </div>
                                 <div className="flex flex-col justify-center md:ml-8 mb-4 md:mb-0"
->
+                                >
                                     <p>Quantity: {item.quantity || "1"}</p>
                                     <p>Status: {order.status}</p>
                                     <p>
