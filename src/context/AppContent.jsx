@@ -1,4 +1,4 @@
-import { createContext, use, useContext, useEffect, useState } from "react"
+import { createContext, useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { dummyProducts } from "../assets/assets"
 import toast from "react-hot-toast"
@@ -32,8 +32,8 @@ export const AppContextProvider = ({ children }) => {
             setIsSeller(false)
         }
     }
-    //Fetch User Auth Status, User Data and Cart Items
-    const fetchUser= async ()=>{
+        // Fetch User Auth Status, User Data and Cart Items
+    const fetchUser = async () => {
         try {
            const {data}= await axios.get('api/user/is-auth');
            if(data.success){
@@ -135,9 +135,27 @@ const removeFromCart = (itemId) => {
     useEffect(() => {
         console.log("Updated user:", user);
     }, [user]);
-    
-    useEffect(()=>{
-        fetchSeller()
+
+
+//Update the cart to DB
+    useEffect(() => {
+        const updateCart = async () => {
+            try {
+                const { data } = await axios.post('/api/cart/update', { cartItems })
+                if (!data.success) {
+                    toast.error(data.message)
+                }
+            } catch (error) {
+                toast.error(error.message)
+            }
+        }
+        if (user) {
+            updateCart()
+        }
+    }, [cartItems])
+
+    useEffect(() => {
+        fetchUser();
         fetchProducts()
         fetchUser()
         

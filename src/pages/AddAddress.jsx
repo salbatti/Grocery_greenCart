@@ -1,5 +1,7 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { assets } from '../assets/assets'
+import { useAppContext } from '../context/AppContent'
+import toast from 'react-hot-toast'
 
 //Input field Component
 
@@ -9,6 +11,7 @@ const InputField = ({ type, placeholder, name, handleChange, address }) => (
         type={type}
         placeholder={placeholder}
         name={name}
+        onChange={handleChange}
         value={address[name]}
         required
     />
@@ -16,6 +19,7 @@ const InputField = ({ type, placeholder, name, handleChange, address }) => (
 
 
 const AddAddress = () => {
+    const { axios, user, navigate } = useAppContext();
 
     const [address, setAddress] = useState({
         firstName: "",
@@ -38,10 +42,29 @@ const AddAddress = () => {
         }));
     };
 
-    const onSubmitHandler = (e) => {
+    const onSubmitHandler = async (e) => {
         e.preventDefault();
+        try {
+            const { data } = await axios.post('/api/address/add', { address })
+            if (data.success) {
+                toast.success(data.message)
+                navigate('/cart')
+            }
+            else {
+                toast.error(data.message)
+            }
+
+        } catch (error) {
+            toast.error(data.message)
+        }
     }
 
+    useEffect(() => {
+        if (user === null) return;
+        if (!user) {
+            navigate('/cart')
+        }
+    }, [])
     return (
         <div className='mt-16 pb-16'>
             <p className='text-2xl md:txt-3xl text-gray-500'>Add Shipping  <span
@@ -71,6 +94,9 @@ const AddAddress = () => {
 
                         <InputField handleChange={handleChange} address={address} name="phone" type="text" placeholder="Phone" />
 
+                        <button className='w-full mt-6 bg-primary text-white py-3 hover:bg-primary-dull transition cursor-pointer' >
+                            SAVE ADDRESS
+                        </button>
 
                     </form>
                 </div>
