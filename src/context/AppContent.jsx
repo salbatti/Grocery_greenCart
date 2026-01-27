@@ -74,10 +74,6 @@ const addToCart = (itemId) => {
     toast.success("Added to Cart");
 };
 
-useEffect(()=>{
-        console.log(cartItems);
-
-},[cartItems])
 
 // Update Cart Item Quantity
 const updateCartItem = (itemId, quantity) => {
@@ -179,7 +175,8 @@ const removeFromCart = (itemId) => {
         getCartCount,
         getCartAmount,
         axios,
-        fetchProducts
+        fetchProducts,
+        setCartItems
     }
 
     return (
