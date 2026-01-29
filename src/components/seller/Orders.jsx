@@ -1,13 +1,24 @@
 import React, { useEffect, useState } from 'react'
-import { useAppContext } from '../../context/AppContent';
+import { useAppContext } from '../../context/AppContent.jsx'
 import { assets, dummyOrders } from '../../assets/assets';
+import toast from 'react-hot-toast';
+import axios from 'axios';
 
 const Orders = () => {
     const { currency } = useAppContext()
     const [orders, setOrders] = useState([])
 
     const fetchOrders = async () => {
-        setOrders(dummyOrders)
+        try {
+            const { data } = await axios.get('/api/order/seller')
+            if (data.success) {
+                setOrders(data.orders)
+            } else {
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
     };
 
     useEffect(() => {
@@ -36,7 +47,7 @@ const Orders = () => {
 
                         <div className="text-sm md:text-base text-black/60">
                             <p className='font-medium mb-1'>{order.address.firstName} {order.address.lastName}</p>
-                           
+
                             <p>{order.address.street}, {order.address.city}</p>
                             <p> {order.address.state}, {order.address.zipcode}, {order.address.country}</p>
                             <p></p>
