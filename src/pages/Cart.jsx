@@ -61,6 +61,23 @@ const Cart = () => {
                     toast.error(data.message)
                 }
             }
+            else{
+                //Place order with stripe
+                 const { data } = await axios.post('/api/order/stripe', {
+                    userId: user._id,
+                    items: cartArray.map(item => ({ product: item._id, quantity: item.quantity })),
+                    address: selectedAddress._id
+                })
+
+                if (data.success) {
+                    // toast.success(data.message)
+                    // setCartItems({})
+                    window.location.replace(data.url);
+                }
+                else {
+                    toast.error(data.message)
+                }
+            }
 
         } catch (error) {
             toast.error(error.message)
@@ -108,7 +125,7 @@ const Cart = () => {
                                             onChange={e => updateCartItem(product._id, Number(e.target.value))}
                                             value={cartItems[product._id]}
                                             className='outline-none'>
-                                            {Array(cartItems[product._id] > 9 ? carItems[product._id] : 9).fill('').map((_, index) => (
+                                            {Array(cartItems[product._id] > 9 ? cartItems[product._id] : 9).fill('').map((_, index) => (
                                                 <option key={index} value={index + 1}>{index + 1}</option>
                                             ))}
                                         </select>
