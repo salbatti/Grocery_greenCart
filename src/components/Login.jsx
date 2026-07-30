@@ -8,7 +8,7 @@ const Login = () => {
     const [name, setName] = React.useState("");
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
-    const { user, setShowUserLogin, setUser,axios,navigate } = useAppContext()
+    const { user, setShowUserLogin, setUser, setCartItems, cartItems, axios,navigate } = useAppContext()
 
 
     const onsubmitHandler = async (e) => {
@@ -19,8 +19,14 @@ const Login = () => {
             name,email,password
         })
         if(data.success){
+            const savedCartItems = data.user?.cartItems || {}
+            const mergedCartItems = { ...savedCartItems }
+            for (const itemId in cartItems) {
+                mergedCartItems[itemId] = (mergedCartItems[itemId] || 0) + cartItems[itemId]
+            }
             navigate('/')
-            setUser(data.user)
+            setUser({ ...data.user, cartItems: mergedCartItems })
+            setCartItems(mergedCartItems)
             setShowUserLogin(false)
         }
         else{

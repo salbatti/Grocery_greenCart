@@ -12,12 +12,12 @@ const ProductDetails = () => {
 
     const product = products.find((item) => item._id === id);
     useEffect(() => {
-        if (products.length > 0) {
+        if (products.length > 0 && product) {
             let productCopy = products.slice();
             productCopy = productCopy.filter((item) => item.category === product.category)
             setRelatedProducts(productCopy.slice());
         }
-    }, [products])
+    }, [products, product])
 
     useEffect(() => {
         setThumbnail(product?.image[0] ? product.image[0] : null)
@@ -50,8 +50,8 @@ const ProductDetails = () => {
                     <h1 className="text-3xl font-medium">{product.name}</h1>
 
                     <div className="flex items-center gap-0.5 mt-1">
-                        {Array(5).fill('').map((_, i) => (
-                            <img src={i < 4 ? assets.star_icon : assets.star_dull_icon} alt="" className="md:w-4 w-3.5" />
+                    {Array(5).fill('').map((_, i) => (
+                            <img key={i} src={i < 4 ? assets.star_icon : assets.star_dull_icon} alt="" className="md:w-4 w-3.5" />
                         ))}
                         <p className="text-base ml-2">(4)</p>
                     </div>
@@ -104,8 +104,8 @@ const ProductDetails = () => {
                     sm:gap-4
                     md:gap-12     
                     mt-6'>
-                    {relatedProducts.filter((product) => product.inStock).map((product, index) => (
-                        <ProductCard key={index} product={product} />
+                    {relatedProducts.filter((product) => product.inStock).map((product) => (
+                        <ProductCard key={product._id} product={product} />
                     ))}
                 </div>
 

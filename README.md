@@ -1,16 +1,59 @@
-# React + Vite
+# GreenCart - Grocery Delivery Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+GreenCart is a full-stack grocery delivery application built with React, Vite, Tailwind CSS, Express, and MongoDB-ready APIs. The storefront lets users browse grocery categories, view product details, add items to cart, sign in, place orders, and review order history.
 
-Currently, two official plugins are available:
+This repository contains the customer-facing frontend.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Live Demo
 
-## React Compiler
+- Frontend: https://greencart-store-eight.vercel.app
+- Backend API: https://greencart-api.vercel.app
+- Backend repository: https://github.com/salbatti/Grocery_greenCart_server
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Demo account:
 
-## Expanding the ESLint configuration
+```text
+Email: demo@greencart.dev
+Password: password123
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Features
+
+- Responsive grocery storefront with category sections and best-seller products
+- Product details pages with images, pricing, descriptions, and related products
+- Cart management with quantity updates, totals, tax calculation, and order summary
+- User authentication flow connected to a cookie-based backend session
+- Checkout flow for cash on delivery and Stripe-ready online payment fallback
+- Order history page showing placed orders and item details
+- Production deployment connected to a Vercel-hosted Express API
+- Demo product fallback so the store remains browsable if the API is temporarily unavailable
+
+## Tech Stack
+
+- React
+- Vite
+- Tailwind CSS
+- React Router
+- Axios
+- React Hot Toast
+- Vercel
+
+## Local Setup
+
+```bash
+npm install
+npm run dev
+```
+
+Create a `.env` file for local development:
+
+```env
+VITE_CURRENCY=₹
+VITE_BACKEND_URL=http://127.0.0.1:4000
+```
+
+For the deployed app, `VITE_BACKEND_URL` points to the production API.
+
+## Resume Summary
+
+Built and deployed a responsive MERN grocery delivery frontend with product browsing, cart and checkout workflows, user authentication, order history, API integration, and production hosting on Vercel.

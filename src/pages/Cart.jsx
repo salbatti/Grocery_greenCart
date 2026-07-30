@@ -1,11 +1,10 @@
-import React, { use, useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useAppContext } from "../context/AppContent"
 import { assets, dummyAddress } from "../assets/assets"
 import toast from "react-hot-toast"
-import { data } from "react-router-dom"
 
 const Cart = () => {
-    const { products, user, axios, currency, cartItems, removeFromCart, getCartCount, updateCartItem, navigate, getCartAmount, setCartItems } = useAppContext()
+    const { products, user, axios, currency, cartItems, removeFromCart, getCartCount, updateCartItem, navigate, getCartAmount, setCartItems, setShowUserLogin } = useAppContext()
     const [cartArray, setCartArray] = useState([])
     const [addresses, setAddresses] = useState(dummyAddress)
 
@@ -17,8 +16,8 @@ const Cart = () => {
         let tempArray = []
         for (const key in cartItems) {
             const product = products.find((item) => item._id === key)
-            product.quantity = cartItems[key]
-            tempArray.push(product)
+            if (!product) continue
+            tempArray.push({ ...product, quantity: cartItems[key] })
         }
         setCartArray(tempArray)
     }
@@ -41,16 +40,30 @@ const Cart = () => {
     }
     const placeOrder = async () => {
         try {
+            if (!user?._id) {
+                toast.error("Please login to place an order")
+                setShowUserLogin(true)
+                return
+            }
+
+            if (cartArray.length === 0) {
+                toast.error("Your cart is empty")
+                return
+            }
+
             if (!selectedAddress) {
                 toast.error("Please select an address")
+                return
+            }
+
+            const orderPayload = {
+                userId: user._id,
+                items: cartArray.map(item => ({ product: item._id, quantity: item.quantity })),
+                address: selectedAddress._id
             }
 
             if (paymentOption === "COD") {
-                const { data } = await axios.post('/api/order/cod', {
-                    userId: user._id,
-                    items: cartArray.map(item => ({ product: item._id, quantity: item.quantity })),
-                    address: selectedAddress._id
-                })
+                const { data } = await axios.post('/api/order/cod', orderPayload)
 
                 if (data.success) {
                     toast.success(data.message)
@@ -63,16 +76,16 @@ const Cart = () => {
             }
             else{
                 //Place order with stripe
-                 const { data } = await axios.post('/api/order/stripe', {
-                    userId: user._id,
-                    items: cartArray.map(item => ({ product: item._id, quantity: item.quantity })),
-                    address: selectedAddress._id
-                })
+                 const { data } = await axios.post('/api/order/stripe', orderPayload)
 
                 if (data.success) {
-                    // toast.success(data.message)
-                    // setCartItems({})
-                    window.location.replace(data.url);
+                    if (data.url) {
+                        window.location.replace(data.url);
+                        return
+                    }
+                    toast.success(data.message)
+                    setCartItems({})
+                    navigate('/my-orders')
                 }
                 else {
                     toast.error(data.message)
@@ -80,7 +93,7 @@ const Cart = () => {
             }
 
         } catch (error) {
-            toast.error(error.message)
+            toast.error(error.response?.data?.message || error.message)
         }
     }
     useEffect(() => {

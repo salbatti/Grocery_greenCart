@@ -17,8 +17,8 @@ const BestSeller = () => {
         md:gap-5 
         lg:gap-6
         mt-6'>
-        {products.filter((products) => products.inStock).slice(0, 5).map((products, index) => (
-          <ProductCard product={products} />
+        {products.filter((products) => products.inStock).slice(0, 5).map((products) => (
+          <ProductCard key={products._id} product={products} />
         ))}
       </div>
     </div>

@@ -5,7 +5,7 @@ import toast from "react-hot-toast"
 import axios from "axios";
 
 axios.defaults.withCredentials =true;//doubt
-axios.defaults.baseURL =import.meta.env.VITE_BACKEND_URL;
+axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:4000";
 
 export const AppContent = createContext()
 
@@ -35,7 +35,7 @@ export const AppContextProvider = ({ children }) => {
         // Fetch User Auth Status, User Data and Cart Items
     const fetchUser = async () => {
         try {
-           const {data}= await axios.get('api/user/is-auth');
+           const {data}= await axios.get('/api/user/is-auth');
            if(data.success){
             setUser(data.user)
             setCartItems(data.user.cartItems)
@@ -55,7 +55,7 @@ export const AppContextProvider = ({ children }) => {
                 toast.error(data.message)
             }
         } catch (error) {
-               toast.error(data.message)
+               setProducts(dummyProducts)
         }
     }
 
@@ -104,7 +104,7 @@ const getCartAmount = () => {
     );
 
     if (cartItems[items] > 0) {
-      totalAmount += itemInfo.offerPrice * cartItems[items];
+      totalAmount += (itemInfo?.offerPrice || 0) * cartItems[items];
     }
   }
 
@@ -139,10 +139,19 @@ const removeFromCart = (itemId) => {
             try {
                 const { data } = await axios.post('/api/cart/update', { cartItems })
                 if (!data.success) {
+                    if (data.message === "Not Authorized") {
+                        setUser(null)
+                        return
+                    }
                     toast.error(data.message)
                 }
             } catch (error) {
-                toast.error(error.message)
+                const message = error.response?.data?.message || error.message
+                if (message === "Not Authorized") {
+                    setUser(null)
+                    return
+                }
+                toast.error(message)
             }
         }
         if (user) {
